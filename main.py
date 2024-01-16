@@ -85,6 +85,20 @@ class TaskManager:
         print("We don't found task with this title")
         return None
 
+    def sort_tasks_by_priority(self, order=True):
+        def key_sort_tasks(task):
+            priority = {"high": 3, "medium": 2, "low": 1}
+            return priority.get(task.priority.lower())
+
+        self.tasks = sorted(self.tasks, key=key_sort_tasks, reverse=order)
+
+    def sort_tasks_by_status(self, order=True):
+        def key_sort_tasks(task):
+            status = {"to do": 3, "in progress": 2, "done": 1}
+            return status.get(task.status.lower())
+
+        self.tasks = sorted(self.tasks, key=key_sort_tasks, reverse=order)
+
 
 def main():
     task_manager = TaskManager()
@@ -92,9 +106,10 @@ def main():
         print("========== Task Manager ==========")
         print("1. Add task")
         print("2. Display tasks")
-        print("3. Delete task")
-        print("4. Edit task")
-        print("5. Quit")
+        print("3. Sorting tasks")
+        print("4. Delete task")
+        print("5. Edit task")
+        print("6. Quit")
         menu = input()
 
         if menu == "1":
@@ -109,14 +124,31 @@ def main():
             task_manager.display_tasks()
 
         elif menu == "3":
+            sort = input("You wanna sort by status or priority (s / p): ")
+
+            if sort.lower() == "s":
+                sort_order = input("1. Done - To do\n2. To do - Done (default 2.)\n").lower()
+                if sort_order == "1":
+                    task_manager.sort_tasks_by_status(False)
+                else:
+                    task_manager.sort_tasks_by_status()
+
+            if sort.lower() == "p":
+                sort_order = input("1. Low - High\n2. High - Low (default 2.)\n").lower()
+                if sort_order == "1":
+                    task_manager.sort_tasks_by_priority(False)
+                else:
+                    task_manager.sort_tasks_by_priority()
+
+        elif menu == "4":
             title = input("Enter title of task you wanna delete: ")
             task_manager.delete_task(title)
 
-        elif menu == "4":
+        elif menu == "5":
             title = input("Enter title of task you wanna edit: ")
             task_manager.edit_task(title)
 
-        elif menu == "5":
+        elif menu == "6":
             break
 
         else:
