@@ -28,6 +28,7 @@ class Task:
             self.due_date = due_date
         else:
             print("You enter wrong date format")
+            self.due_date = None
 
     def set_priority(self, priority):
         if priority.lower() in ["high", "medium", "low"]:
@@ -40,6 +41,7 @@ class Task:
 class TaskManager:
     def __init__(self):
         self.tasks = []
+        self.load_tasks()
 
     def add_task(self, title, description, due_date, priority, status):
         task = Task(title, description, due_date, priority, status)
@@ -99,6 +101,24 @@ class TaskManager:
 
         self.tasks = sorted(self.tasks, key=key_sort_tasks, reverse=order)
 
+    def load_tasks(self):
+        try:
+            with open("tasks.txt") as f:
+                lines = f.readlines()
+                for line in lines:
+                    line = line.split(";")
+                    task = Task(line[0], line[1], line[2], line[3], line[4])
+                    self.tasks.append(task)
+        except FileNotFoundError:
+            pass
+
+    def save_tasks(self):
+        with open('tasks.txt', 'w') as f:
+            file = ''
+            for task in self.tasks:
+                file += f"{task.title};{task.description};{task.due_date};{task.priority};{task.status}\n"
+            f.write(file)
+
 
 def main():
     task_manager = TaskManager()
@@ -149,6 +169,7 @@ def main():
             task_manager.edit_task(title)
 
         elif menu == "6":
+            task_manager.save_tasks()
             break
 
         else:
